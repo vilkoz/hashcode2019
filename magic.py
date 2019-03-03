@@ -2,12 +2,14 @@
 
 from score import score_slide_transition
 from slide import Slide
+from OrderedHashSet import OrderedHashSet
 
 def stupid_pairing(vertical):
     """
     Naive pairing of vertical photos
     doesn't counting tag combination
     """
+    print('vertical len:', len(vertical))
     pairs = [(vertical[i], vertical[i + 1]) for i in range(0, len(vertical), 2)]
     return [{
                 'is_vertical': False,
@@ -54,9 +56,8 @@ def form_tag_map(slides):
     for s in slides:
         for tag in s["tags"]:
             if tag not in tag_map:
-                tag_map[tag] = [s]
-            else:
-                tag_map[tag].append(s)
+                tag_map[tag] = OrderedHashSet()
+            tag_map[tag].add(s)
     return tag_map
 
 def order_slides_similar_tag_lookup(slides):
@@ -85,10 +86,10 @@ def order_slides_similar_tag_lookup(slides):
                 if score > max_score:
                     max_score = score
                     max_index = s['num']
-                    # break
+                    break
             # some greedy shit
-            # if max_score != 0:
-            #     break
+            if max_score != 0:
+                break
 
         avg_score = 0 if len(res) == 0 else cur_score / len(res)
         print('\rremaining: ', len(slide_dict), end=' ')
@@ -113,7 +114,8 @@ def order_slides_similar_tag_lookup(slides):
         for tag in slide['tags']:
             for i, s in enumerate(tag_map[tag]):
                 if s == slide:
-                    tag_map[tag].pop(i)
+                    # tag_map[tag].pop(i)
+                    tag_map[tag].remove(s)
     # res.append(slide)
     print('')
     return res
