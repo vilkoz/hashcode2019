@@ -24,12 +24,6 @@ class OrderedHashSet:
         else:
             self.keys_list.insert(pos, elem)
 
-    def __getitem__(self, y):
-        if y == 0:
-            return self.getElem()
-        else:
-            raise ValueError("Only fist elem can be get")
-
     def getElem(self):
         """
            Returns element with the smallest value over all set
@@ -40,8 +34,7 @@ class OrderedHashSet:
         """
             Iteration over all elemnts, does not grantied to be ordered
         """
-        # yield next(iter(self.table))
-        return iter(self.keys_list)
+        yield next(iter(self.table))
 
     def __len__(self):
         """

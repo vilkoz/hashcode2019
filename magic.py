@@ -82,8 +82,9 @@ def form_tag_map(slides):
     for s in slides:
         for tag in s["tags"]:
             if tag not in tag_map:
-                tag_map[tag] = OrderedHashSet()
-            tag_map[tag].add(s)
+                tag_map[tag] = [s]
+            else:
+                tag_map[tag].append(s)
     return tag_map
 
 def order_slides_similar_tag_lookup(slides, native_score):
