@@ -17,6 +17,31 @@ def stupid_pairing(vertical):
                 'tags': set(a['tags'] & b['tags'])
             } for a, b in pairs]
 
+def pair_max_tag_count(vertical):
+    """
+    Pair to get max tag count in one slide
+    complexity: n**2
+    """
+    pairs = []
+    while len(vertical) > 0:
+        print('\rremaining:', len(vertical), end='')
+        a = vertical.pop()
+        max_len = 0
+        max_index = 0
+        for i, b in enumerate(vertical):
+            len_tags = len(b['tags'] & a['tags'])
+            if len_tags > max_len:
+                max_len = len_tags
+                max_index = i
+        b = vertical.pop(max_index)
+        pairs.append((a, b))
+    print('')
+    return [{
+                'is_vertical': False,
+                'num': (a['num'], b['num']),
+                'tags': set(a['tags'] & b['tags'])
+            } for a, b in pairs]
+
 def stupid_select_first_slide(slides_p):
     """
     Naive first slide selection
@@ -29,8 +54,9 @@ def group_vertical_photos(photos):
     vertical = [x for x in photos if x['is_vertical']]
     horisontal = [x for x in photos if not x['is_vertical']]
     return horisontal + stupid_pairing(vertical)
+    # return horisontal + pair_max_tag_count(vertical)
 
-def order_slides(slides):
+def order_slides(slides, _):
     """
     Ordering slides with maximisation of score function
     O(n) ~= n**2
@@ -60,7 +86,7 @@ def form_tag_map(slides):
             tag_map[tag].add(s)
     return tag_map
 
-def order_slides_similar_tag_lookup(slides):
+def order_slides_similar_tag_lookup(slides, native_score):
     slides = [Slide(s) for s in slides]
     tag_map = form_tag_map(slides)
 
@@ -88,12 +114,15 @@ def order_slides_similar_tag_lookup(slides):
                     max_index = s['num']
                     # break
             # some greedy shit
-            if max_score > 0:
+            if max_score > 1:
                 break
 
         avg_score = 0 if len(res) == 0 else cur_score / len(res)
         print('\rremaining: ', len(slide_dict), end=' ')
         print('iters: ', iters, 'max_score:', max_score, 'avg score: ', avg_score, 'estimate:', avg_score * len(slides), end='')
+
+        if avg_score * len(slides) < native_score and avg_score != 0:
+            return None
 
         res.append(slide)
         if max_index == -1:
@@ -119,11 +148,13 @@ def order_slides_similar_tag_lookup(slides):
     print('')
     return res
 
-def group_photos_to_slides(photos):
+def group_photos_to_slides(photos, score):
     """
     Groups photos to achieve highest interest score
     """
-    photos = group_vertical_photos(photos)
-    # photos = order_slides(photos)
-    photos = order_slides_similar_tag_lookup(photos)
+    grouped_photos = group_vertical_photos(photos)
+    # res = order_slides(grouped_photos, score)
+    res = order_slides_similar_tag_lookup(grouped_photos, score)
+    if res != None:
+        return res
     return photos

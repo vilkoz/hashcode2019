@@ -32,11 +32,27 @@ def parse_input(f):
         photos.append(photo)
     return photos
 
+def write_output(photos):
+    s = ""
+    s += str(len(photos)) + '\n'
+    for p in photos:
+        if p['num'].__class__ == tuple:
+            for i, n in enumerate(p['num']):
+                s += str(n)
+                if i != len(p['num']):
+                    s += ' '
+        else:
+            s += str(p['num']) + '\n'
+    with open(argv[1] + '.out', 'w') as f:
+        f.write(s)
+
 def main():
     photos = parse_input(argv[1])
+    input_score = score_slide_list(photos)
+    print('score:', input_score)
+    photos = group_photos_to_slides(photos, input_score)
     print('score:', score_slide_list(photos))
-    photos = group_photos_to_slides(photos)
-    print('score:', score_slide_list(photos))
+    write_output(photos)
 
 if __name__ == "__main__":
     main()
