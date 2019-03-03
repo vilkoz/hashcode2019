@@ -79,16 +79,16 @@ def order_slides_similar_tag_lookup(slides):
         iters = 0
         for tag in slide['tags']:
             for s in tag_map[tag]:
-                # if s['num'] not in slide_dict:
-                #     continue
+                if s['num'] not in slide_dict:
+                    continue
                 iters += 1
                 score = score_slide_transition(slide, s)
                 if score > max_score:
                     max_score = score
                     max_index = s['num']
-                    break
+                    # break
             # some greedy shit
-            if max_score != 0:
+            if max_score > 0:
                 break
 
         avg_score = 0 if len(res) == 0 else cur_score / len(res)
@@ -102,21 +102,20 @@ def order_slides_similar_tag_lookup(slides):
                     s = tag_map[tag][0]
                     max_index = s['num']
                     break
-            # while max_index == -1 or max_index not in slide_dict:
-            #     max_index = next(iter(slide_dict))
-            if max_index == -1:
+            while max_index == -1 or max_index not in slide_dict:
                 max_index = next(iter(slide_dict))
+            # if max_index == -1:
+            #     max_index = next(iter(slide_dict))
 
         cur_score += max_score
 
         slide = slide_dict.pop(max_index)
 
-        for tag in slide['tags']:
-            for i, s in enumerate(tag_map[tag]):
-                if s == slide:
-                    # tag_map[tag].pop(i)
-                    tag_map[tag].remove(s)
-    # res.append(slide)
+        # for tag in slide['tags']:
+        #     for i, s in enumerate(tag_map[tag]):
+        #         if s == slide:
+        #             # tag_map[tag].pop(i)
+        #             tag_map[tag].remove(s)
     print('')
     return res
 
