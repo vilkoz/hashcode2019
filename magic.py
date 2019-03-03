@@ -100,6 +100,7 @@ def order_slides_similar_tag_lookup(slides, native_score):
     slide_dict = {x['num']: x for x in slides}
     res = []
     slide = stupid_select_first_slide([slides])
+    slide_dict.pop(slide['num'])
     while len(slide_dict) > 0:
         max_score = 0
         max_index = -1
