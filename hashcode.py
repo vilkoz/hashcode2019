@@ -33,18 +33,15 @@ def parse_input(f):
     return photos
 
 def write_output(photos):
-    s = ""
-    s += str(len(photos)) + '\n'
+    l = []
+    l.append(str(len(photos)))
     for p in photos:
         if p['num'].__class__ == tuple:
-            for i, n in enumerate(p['num']):
-                s += str(n)
-                if i != len(p['num']):
-                    s += ' '
+            l.append(" ".join([str(n) for n in p['num']]))
         else:
-            s += str(p['num']) + '\n'
+            l.append(str(p['num']))
     with open(argv[1] + '.out', 'w') as f:
-        f.write(s)
+        f.write("\n".join(l))
 
 def main():
     photos = parse_input(argv[1])
