@@ -26,7 +26,8 @@ def parse_input(f):
         photo['is_vertical'] = photo_params_list.pop(0) == 'V'
         photo['num'] = i
         photo['tags'] = []
-        for __ in range(int(photo_params_list.pop(0))):
+        num_tags = int(photo_params_list.pop(0))
+        for __ in range(num_tags):
             photo['tags'].append(photo_params_list.pop(0))
         photo['tags'] = set(photo['tags'])
         photos.append(photo)
